@@ -1,9 +1,18 @@
 package com.company;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
+import java.util.Properties;
+
+
 
 public class DataBase {
+    FileInputStream fileInputStream;
+    //инициализируем специальный объект Properties
+    Properties prop = new Properties();
     //сканер не факт что нужен
     Scanner scanner = new Scanner(System.in);
     //поле коннекта
@@ -19,17 +28,19 @@ public class DataBase {
     private static DataBase myDBObject;
 
     //открытый статический метод используемый для получения объекта нашего класса
-    public static DataBase getMyDBObject() throws SQLException {
+    public static DataBase getMyDBObject() throws SQLException, IOException {
         if (myDBObject == null) {
             myDBObject = new DataBase();
         }
         return myDBObject;
     }
 
-    public DataBase() throws SQLException {
-        DB_URL = "jdbc:postgresql://localhost:5432/postgres";
-        DB_USER = "postgres";
-        DB_PASS = "0000";
+    public DataBase() throws SQLException, IOException {
+        fileInputStream = new FileInputStream("src/main/resources/ServerConfig.properties");
+        prop.load(fileInputStream);
+        DB_URL = prop.getProperty("URL");
+        DB_USER = prop.getProperty("LOGIN");
+        DB_PASS = prop.getProperty("PASSWORD");
         ConnectToDB();
     }
 

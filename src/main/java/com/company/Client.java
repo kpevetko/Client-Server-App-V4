@@ -21,7 +21,7 @@ public class Client {
 
     //тут блок работы с БД
     //меняем на True булевое значение в БД у юзера
-    public void setUserOnline() throws SQLException {
+    public void setUserOnline() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "UPDATE myusers set useron = true where username like ? and userpassword like ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
@@ -31,7 +31,7 @@ public class Client {
     }
 
     //меняем на False булевое значение в БД у юзера
-    public void setUserOffline() throws SQLException {
+    public void setUserOffline() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "UPDATE myusers set useron = false where username like ? and userpassword like ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
@@ -42,7 +42,7 @@ public class Client {
 
 
     //проверяем есть ли такой юзер с таким паролем, если нет предлагаем создать нового
-    public boolean userExistence() throws SQLException {
+    public boolean userExistence() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "select * from MYUSERS where username like ? and userpassword like ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
