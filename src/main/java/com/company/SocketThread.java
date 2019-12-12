@@ -40,9 +40,10 @@ public class SocketThread extends Thread {
             //читаем сообщения от клиента пока он не скажет bye
             String userMessage = null;
 
-
+            //ошибка со стороны сокета вылетала здесь (строка 44, обработка строки 47-53)
             //while ((userMessage = br.readLine()) != null) {
             while (true) {
+                //это обработка ошибки со стороны сокета
                 try {
                     userMessage = br.readLine();
                 } catch (Exception e) {
@@ -50,6 +51,7 @@ public class SocketThread extends Thread {
                     //return;
                     closeAll();
                 }
+
                 //сравниваем с bye, если так то выходим из цикла и закрываем соединение
                 if (userMessage.equals("bye")) {
 

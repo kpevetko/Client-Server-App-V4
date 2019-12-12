@@ -40,6 +40,7 @@ public class ThreadServer {
                 }catch (Exception e){
                     e.fillInStackTrace();
                 }
+                //ошибка со стороны сервера вылетала здесь (строка 44, обработка строки 38-42)
                 //if ((userName = br.readLine()) != null && (!userName.equals("bye"))) {
                 if (userName != null && (!userName.equals("bye"))) {
                     //подключение успешно
