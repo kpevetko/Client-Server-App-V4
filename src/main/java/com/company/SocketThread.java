@@ -96,7 +96,7 @@ public class SocketThread extends Thread {
     }
 
     //записывает все диалоги в БД
-    public void writheMessageToDB(String message) throws SQLException {
+    public void writheMessageToDB(String message) throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "INSERT INTO mylogs (messageid, messagestring) VALUES (?,?)";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
@@ -158,7 +158,7 @@ public class SocketThread extends Thread {
     }
 
     //меняем на False булевое значение в БД у юзера, но со стороны потока (для случаем аварийного отключения)
-    public void setUserOfflineFromSocket() throws SQLException {
+    public void setUserOfflineFromSocket() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "UPDATE myusers set useron = false where username like ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
@@ -183,7 +183,7 @@ public class SocketThread extends Thread {
             for (SocketThread socket : userList) {
                 try {
                     PrintWriter print = socket.getPrint();
-                    writheMessageToDB(getTime() + "[ " + myName + "] пишет в чат: " + message); //запись в БД
+                    writheMessageToDB(getTime() + "[" + myName + "] пишет в чат: " + message); //запись в БД
                     print.println("[" + getTime() + " " + myName + "] " + message);
                 } catch (Exception ex) {
                     ex.printStackTrace(System.out);
@@ -194,7 +194,7 @@ public class SocketThread extends Thread {
 
     //оповещаем о том, что от сервера отключился такой-то
     //так же записывает это в БД
-    public void messageUserExit() throws SQLException {
+    public void messageUserExit() throws SQLException, IOException {
         writheMessageToDB(getTime() + " [" + myName + "] отключился от сервера");
         synchronized (userList) {
             for (SocketThread socket : userList) {
@@ -210,7 +210,7 @@ public class SocketThread extends Thread {
 
     //оповещаем о том, что от сервера отключился такой-то
     //так же записывает это в БД
-    public void messageUserEnter() throws SQLException {
+    public void messageUserEnter() throws SQLException, IOException {
         writheMessageToDB(getTime() + " [" + myName + "] вошел на сервер");
         synchronized (userList) {
             for (SocketThread socket : userList) {
@@ -227,7 +227,7 @@ public class SocketThread extends Thread {
     }
 
     //Получаем список всех людей кто онлайн на сервере
-    public void getUserList() throws SQLException {
+    public void getUserList() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "Select * from myusers where useron=true";
         Statement preparedStatement = DBC.getStatement();
