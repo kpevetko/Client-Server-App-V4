@@ -32,12 +32,11 @@ public class ThreadServer {
                 PrintWriter pw = new PrintWriter(fromClientSocket.getOutputStream(), true);
                 //строка содержащая имя пользователя
 
-                String userName=null;
-
+                String userName = null;
 
                 try {
                     userName = br.readLine();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.fillInStackTrace();
                 }
                 //ошибка со стороны сервера вылетала здесь (строка 44, обработка строки 38-42)

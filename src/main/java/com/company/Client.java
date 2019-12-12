@@ -106,11 +106,18 @@ public class Client {
             }
 
         } else {
-            System.out.println("данные верны");
-            this.name = login;
-            this.password = password;
-            setUserOnline();
-            return true;
+            //если такой пользователь есть, но он уже онлайн - тогда выход
+            if(rs.getBoolean(4)){
+                System.out.println("такой пользователь уже в сети");
+                return false;
+            }else{
+                System.out.println("данные верны");
+                this.name = login;
+                this.password = password;
+                setUserOnline();
+                return true;
+            }
+
         }
 
     }
