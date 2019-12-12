@@ -50,11 +50,26 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         String login, password, anwser;
         System.out.println("Введите логин");
+        // просит вводить логин пока он не станет меньше 19 символов или пока он будет равет пустому
+        // в случае если логин будет равен нулю или bye, вернет false и выйдет из системы
+        /*do {
+            login = scanner.nextLine();
+            if (login == null || login.equals("bye")) {
+                return false;
+            }
+            System.out.println("Логин не должен содержать пустое место или быть больше 19 символов");
+        } while (login.equals("") || login.length() > 19);*/
         login = scanner.nextLine();
-        if (login == null || login.equals("bye") || login.equals("")) {
+        if (login == null || login.equals("bye")) {
             return false;
         }
-
+        while (login.equals("") || login.length() > 19){
+            System.out.println("Логин не должен содержать пустое место или быть больше 19 символов");
+            login = scanner.nextLine();
+            if (login == null || login.equals("bye")) {
+                return false;
+            }
+        }
 
         System.out.println("Введите пароль");
         password = scanner.nextLine();
@@ -104,7 +119,6 @@ public class Client {
     public String getName() {
         return name;
     }
-
 
 
     ///////до этого, работа с БД

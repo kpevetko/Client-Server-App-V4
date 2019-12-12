@@ -38,9 +38,19 @@ public class SocketThread extends Thread {
             messageUserEnter();
 
             //читаем сообщения от клиента пока он не скажет bye
-            String userMessage;
-            while ((userMessage = br.readLine()) != null) {
-                //сравниваем с bye, если так то выходим из цыкла и закрываем соединение
+            String userMessage = null;
+
+
+            //while ((userMessage = br.readLine()) != null) {
+            while (true) {
+                try {
+                    userMessage = br.readLine();
+                } catch (Exception e) {
+                    //e.fillInStackTrace();
+                    //return;
+                    closeAll();
+                }
+                //сравниваем с bye, если так то выходим из цикла и закрываем соединение
                 if (userMessage.equals("bye")) {
 
                     //тоже говорим клиенту
@@ -53,6 +63,7 @@ public class SocketThread extends Thread {
                     getUserList();
                 } else if (userMessage.equals("users")) { //выводит список всех клиентов, даже тех кто не в онлайне (согласно БД)
                     //sendMessageToChat(userMessage);
+                    System.out.println(userList.size());
                 } else if (userMessage.indexOf("::") > 1) { //отправляем личное сообщение конкретному пользователю
                     sendTransMessage(userMessage);
                 } else if (!userMessage.equals("")) { //отправляем месседж в чат (не через сервер, а каждому кто в онлайне)
@@ -61,11 +72,20 @@ public class SocketThread extends Thread {
                     //если пустое сообщение - ничего не пишем
                 }
             }
+            userList.remove(this);
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void closeAll() throws IOException {
+        userList.remove(this);
+        pw.close();
+        br.close();
+        localSocket.close();
+        return;
     }
 
     //получаем исходящий поток для сокетов/сокета
@@ -91,6 +111,7 @@ public class SocketThread extends Thread {
         preparedStatement.execute();
     }
 
+    //получаем время текущее
     public String getTime() {
         Date date = new Date();
         SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss");
@@ -118,7 +139,7 @@ public class SocketThread extends Thread {
                             try {
                                 if (socket.myName.equals(userTo)) {
                                     PrintWriter print = socket.getPrint();
-                                    writheMessageToDB("[" + getTime() + " " + myName + "] шлет вам личное сообщение: " + retval); //запись в БД
+                                    writheMessageToDB(getTime() + "[" + myName + "] шлет личное сообщение [" + userTo + "] :" + retval); //запись в БД
                                     print.println("[" + getTime() + " " + myName + "] шлет вам личное сообщение: " + retval);
                                     return;
                                 }
@@ -143,7 +164,7 @@ public class SocketThread extends Thread {
             for (SocketThread socket : userList) {
                 try {
                     PrintWriter print = socket.getPrint();
-                    writheMessageToDB("[" + getTime() + " " + myName + "] " + message); //запись в БД
+                    writheMessageToDB(getTime() + "[ " + myName + "] пишет в чат: " + message); //запись в БД
                     print.println("[" + getTime() + " " + myName + "] " + message);
                 } catch (Exception ex) {
                     ex.printStackTrace(System.out);
@@ -153,7 +174,9 @@ public class SocketThread extends Thread {
     }
 
     //оповещаем о том, что от сервера отключился такой-то
-    public void messageUserExit() {
+    //так же записывает это в БД
+    public void messageUserExit() throws SQLException {
+        writheMessageToDB(getTime() + " [" + myName + "] отключился от сервера");
         synchronized (userList) {
             for (SocketThread socket : userList) {
                 try {
@@ -167,7 +190,9 @@ public class SocketThread extends Thread {
     }
 
     //оповещаем о том, что от сервера отключился такой-то
-    public void messageUserEnter() {
+    //так же записывает это в БД
+    public void messageUserEnter() throws SQLException {
+        writheMessageToDB(getTime() + " [" + myName + "] вошел на сервер");
         synchronized (userList) {
             for (SocketThread socket : userList) {
                 try {
