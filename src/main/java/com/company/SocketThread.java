@@ -47,9 +47,8 @@ public class SocketThread extends Thread {
                 try {
                     userMessage = br.readLine();
                 } catch (Exception e) {
-                    //e.fillInStackTrace();
-                    //return;
                     closeAll();
+                    break;
                 }
 
                 //сравниваем с bye, если так то выходим из цикла и закрываем соединение
@@ -74,7 +73,7 @@ public class SocketThread extends Thread {
                     //если пустое сообщение - ничего не пишем
                 }
             }
-            userList.remove(this);
+
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (SQLException e) {
@@ -82,12 +81,13 @@ public class SocketThread extends Thread {
         }
     }
 
-    public void closeAll() throws IOException {
+    //закрывает все каналы связанные с этой нитью
+    public void closeAll() throws IOException, SQLException {
+        setUserOfflineFromSocket();
         userList.remove(this);
         pw.close();
         br.close();
         localSocket.close();
-        return;
     }
 
     //получаем исходящий поток для сокетов/сокета
@@ -155,6 +155,23 @@ public class SocketThread extends Thread {
 
             }
         }
+    }
+
+    //меняем на False булевое значение в БД у юзера, но со стороны потока (для случаем аварийного отключения)
+    public void setUserOfflineFromSocket() throws SQLException {
+        DataBase DBC = DataBase.getMyDBObject();
+        String SQL = "UPDATE myusers set useron = false where username like ?";
+        PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
+        synchronized (userList) {
+            for (SocketThread socket : userList) {
+                try {
+                    preparedStatement.setString(1, socket.myName);
+                } catch (Exception ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+        }
+        preparedStatement.executeUpdate();
     }
 
     //метод отправляющий ВСЕХ кто в онлайне в личный чат переписку
