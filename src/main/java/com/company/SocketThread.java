@@ -19,10 +19,10 @@ public class SocketThread extends Thread {
     public LinkedList<SocketThread> userList = null;
 
 
-    public SocketThread(Socket fromClietnSocket, LinkedList<SocketThread> userlist, String name) {
+    public SocketThread(Socket fromClietnSocket, LinkedList<SocketThread> userlist) {
         this.fromClientSocket = fromClietnSocket;
         this.userList = userlist;
-        this.myName = name;
+        //this.myName = name;
     }
 
     @Override
@@ -32,8 +32,18 @@ public class SocketThread extends Thread {
             localSocket = fromClientSocket;
             pw = new PrintWriter(localSocket.getOutputStream(), true);
             br = new BufferedReader(new InputStreamReader(localSocket.getInputStream()));
-            userList.add(this);
 
+            //это обработка ошибки со стороны сокета
+            //при входе на сервер клиента
+            try {
+                myName = br.readLine();
+                userList.add(this);
+            } catch (Exception e) {
+                pw.close();
+                br.close();
+                localSocket.close();
+                return;
+            }
             //пишем всем что такой-то вошел в чат
             messageUserEnter();
 
@@ -41,9 +51,9 @@ public class SocketThread extends Thread {
             String userMessage = null;
 
             //ошибка со стороны сокета вылетала здесь (строка 44, обработка строки 47-53)
-            //while ((userMessage = br.readLine()) != null) {
             while (true) {
                 //это обработка ошибки со стороны сокета
+                //во время работы с клиентом
                 try {
                     userMessage = br.readLine();
                 } catch (Exception e) {
