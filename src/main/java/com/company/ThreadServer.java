@@ -1,7 +1,5 @@
 package com.company;
 
-import com.sun.security.ntlm.Server;
-
 //код многопоточного сервера, первая часть
 import java.io.*;
 import java.net.*;

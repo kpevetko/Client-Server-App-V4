@@ -7,9 +7,6 @@ import java.text.*;
 import java.util.*;
 import java.util.Date;
 
-
-//сделать переадресацию клиенту
-
 public class SocketThread extends Thread {
     private Socket localSocket = null;
     private PrintWriter pw = null;
@@ -18,11 +15,9 @@ public class SocketThread extends Thread {
     private Socket fromClientSocket;
     public LinkedList<SocketThread> userList = null;
 
-
     public SocketThread(Socket fromClietnSocket, LinkedList<SocketThread> userlist) {
         this.fromClientSocket = fromClietnSocket;
         this.userList = userlist;
-        //this.myName = name;
     }
 
     @Override
@@ -38,6 +33,7 @@ public class SocketThread extends Thread {
             try {
                 if (userExistence()) {
                     pw.println("Подключено");
+
                     userList.add(this);
                 } else {
                     System.out.println("Принято bye, null или пустая строка при вводе имени - Клиент отключен от сервера");
@@ -48,6 +44,7 @@ public class SocketThread extends Thread {
                     return;
                 }
             } catch (Exception e) {
+                pw.println("bye");
                 pw.close();
                 br.close();
                 localSocket.close();
@@ -114,6 +111,7 @@ public class SocketThread extends Thread {
     //пробегаем по таблице БД, ищем есть ли такой пользователь
     //если таких вообще в таблице нет, предлагаем создать нового
     //проверяем есть ли такой юзер с таким паролем, если нет предлагаем создать нового
+    //возможно стоит доработать!
     public boolean userExistence() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
         String SQL = "select * from MYUSERS where username like ? and userpassword like ?";
@@ -121,8 +119,8 @@ public class SocketThread extends Thread {
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
         PreparedStatement preparedStatementUser = DBC.connection.prepareStatement(SQLuser);
 
-        String login, login2, password, anwser;
-        boolean userExist=false;
+        String login, password, anwser;
+        boolean userExist = false;
         pw.println("Введите логин");
         // просит вводить логин пока он не станет меньше 19 символов или пока он будет равет пустому
         // в случае если логин будет равен нулю или bye, вернет false и выйдет из системы
