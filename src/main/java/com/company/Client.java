@@ -1,21 +1,11 @@
 package com.company;
 
-import com.sun.org.apache.bcel.internal.generic.InstructionConstants;
-
-import javax.print.DocFlavor;
-import java.net.SocketException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Scanner;
-
-//клиент
-//
-
-
 import java.io.*;
 import java.net.Socket;
+
+
+//клиент
 
 public class Client {
     private Scanner scanner = new Scanner(System.in);
@@ -41,14 +31,15 @@ public class Client {
         keyThread.start();
     }*/
 
-    public void startClient() throws IOException, SQLException {
+    public void startClient() throws IOException {
 
         int portNumber = 1777;
-        String str;
+        String str =null;
         System.out.println("Client is started");
         socket = new Socket("127.0.0.1", portNumber);
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pw = new PrintWriter(socket.getOutputStream(), true);
+
 
         //запускаем нить для написания на сервер
         //typewritingThread();
@@ -103,7 +94,7 @@ public class Client {
 
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(String[] args) throws IOException {
         Client client = new Client();
         client.startClient();
 

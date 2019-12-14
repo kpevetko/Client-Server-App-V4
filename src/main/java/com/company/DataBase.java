@@ -1,7 +1,6 @@
 package com.company;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
@@ -13,8 +12,6 @@ public class DataBase {
     FileInputStream fileInputStream;
     //инициализируем специальный объект Properties
     Properties prop = new Properties();
-    //сканер не факт что нужен
-    Scanner scanner = new Scanner(System.in);
     //поле коннекта
     Connection connection = null;
     //поля содержащие параметры входа (адрес, имя и пароль) для базы
