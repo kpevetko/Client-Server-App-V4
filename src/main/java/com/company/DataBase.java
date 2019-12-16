@@ -47,13 +47,10 @@ public class DataBase {
         String SQL = "INSERT INTO MYUSERS (userid,USERNAME,USERPASSWORD) VALUES (?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(SQL);
         Statement statement = myDBObject.getStatement();
-        ResultSet rs = statement.executeQuery("select * from myusers");
-        int rst = 0;
-        while (rs.next()) {
-            if (rs.isLast()) {
-                rst = rs.getRow();
-            }
-        }
+        ResultSet rs = statement.executeQuery("select max(userid) from myusers");
+        rs.next();
+        int rst = rs.getInt(1);;
+
         preparedStatement.setInt(1, rst + 1);
         preparedStatement.setString(2, name);
         preparedStatement.setString(3, password);

@@ -237,14 +237,11 @@ public class SocketThread extends Thread {
         String SQL = "INSERT INTO mylogs (messageid, messagestring) VALUES (?,?)";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
         Statement statement = DBC.getStatement();
-        ResultSet rs = statement.executeQuery("select * from mylogs");
-        int rst = 0;
-        while (rs.next()) {
-            if (rs.isLast()) {
-                rst = rs.getRow();
-            }
-        }
-        preparedStatement.setInt(1, rst + 1);
+        ResultSet rs = statement.executeQuery("select max(messageid) from mylogs");
+        rs.next();
+        int rst = rs.getInt(1);;
+
+        preparedStatement.setInt(1, rst+1);
         preparedStatement.setString(2, message);
         preparedStatement.execute();
     }
