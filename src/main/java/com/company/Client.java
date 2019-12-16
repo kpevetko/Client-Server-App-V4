@@ -13,23 +13,6 @@ public class Client {
     private BufferedReader br = null;
     private Socket socket = null;
 
-    //нить (поток) отвечает за отправку сообещний на сервер, при написании bye - прерывается
-    /*public void typewritingThread() {
-        Thread keyThread = new Thread() {
-            @Override
-            public void run() {
-                while (!Thread.interrupted()) {
-                    try {
-                        String message = scanner.nextLine();
-                        pw.println(message);
-                    } catch (Exception x) {
-                        break;
-                    }
-                }
-            }
-        };
-        keyThread.start();
-    }*/
 
     public void startClient() throws IOException {
 

@@ -101,38 +101,35 @@ public class SocketThread extends Thread {
     //меняем на True булевое значение в БД у юзера
     public void setUserOnline() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
-        String SQL = "UPDATE myusers set useron = true where username like ?";
+        String SQL = "UPDATE myusers set useron = true where username = ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
         preparedStatement.setString(1, this.myName);
         preparedStatement.executeUpdate();
     }
 
-    //проверяем возможность входа, если все нормально - запускаем на сервер, иначе пишем серверу bye
-    //пробегаем по таблице БД, ищем есть ли такой пользователь
-    //если таких вообще в таблице нет, предлагаем создать нового
-    //проверяем есть ли такой юзер с таким паролем, если нет предлагаем создать нового
-    //возможно стоит доработать!
+    //проверяем существует ли пользователь с введенными данными
+    //так же проверяет есть ли пользователь с таким логином для входа
+    //параллельно, в случае если не существует предлагает добавить нового
+    //в случае если пользователь есть, но он уже онлайн запрещает вход
     public boolean userExistence() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
-        String SQL = "select * from MYUSERS where username like ? and userpassword like ?";
-        String SQLuser = "select * from MYUSERS where username like ?";
+        String SQL = "select * from MYUSERS where username = ? and userpassword = ?";
+        String SQLuser = "select * from MYUSERS where username = ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
         PreparedStatement preparedStatementUser = DBC.connection.prepareStatement(SQLuser);
 
         String login, password, anwser;
         boolean userExist = false;
         pw.println("Введите логин");
-        // просит вводить логин пока он не станет меньше 19 символов или пока он будет равет пустому
+        // просит вводить логин пока он не станет меньше или не будет равен 20 символам или пока он будет равет пустому
         // в случае если логин будет равен нулю или bye, вернет false и выйдет из системы
         login = br.readLine();
-        //System.out.println(login);
         if (login == null || login.equals("bye")) {
             return false;
         }
 
-
-        while (login.equals("") || login.length() > 19) {
-            pw.println("Логин не должен содержать пустое место или быть больше 19 символов\nПовторите ввод логина");
+        while (login.equals("") || login.length() >= 20) {
+            pw.println("Логин не должен содержать пустое место или быть больше 20 символов\nПовторите ввод логина");
             login = br.readLine();
             if (login == null || login.equals("bye")) {
                 return false;
@@ -213,7 +210,7 @@ public class SocketThread extends Thread {
     //5 ветка - переработал, теперь отключение в БД будет только по имени (запретить создавать пользователей с одинаковыми именами)
     public void setUserOffline() throws SQLException, IOException {
         DataBase DBC = DataBase.getMyDBObject();
-        String SQL = "UPDATE myusers set useron = false where username like ?";
+        String SQL = "UPDATE myusers set useron = false where username = ?";
         PreparedStatement preparedStatement = DBC.connection.prepareStatement(SQL);
         preparedStatement.setString(1, this.myName);
         preparedStatement.executeUpdate();
