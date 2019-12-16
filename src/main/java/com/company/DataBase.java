@@ -47,7 +47,7 @@ public class DataBase {
         String SQL = "INSERT INTO MYUSERS (userid,USERNAME,USERPASSWORD) VALUES (?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(SQL);
         Statement statement = myDBObject.getStatement();
-        ResultSet rs = statement.executeQuery("select max(messageid) from mylogs");
+        ResultSet rs = statement.executeQuery("select max(userid) from myusers");
         rs.next();
         int rst = rs.getInt(1);;
 
