@@ -239,9 +239,10 @@ public class SocketThread extends Thread {
         Statement statement = DBC.getStatement();
         ResultSet rs = statement.executeQuery("select max(messageid) from mylogs");
         rs.next();
-        int rst = rs.getInt(1);;
+        int rst = rs.getInt(1);
+        ;
 
-        preparedStatement.setInt(1, rst+1);
+        preparedStatement.setInt(1, rst + 1);
         preparedStatement.setString(2, message);
         preparedStatement.execute();
     }
@@ -256,7 +257,7 @@ public class SocketThread extends Thread {
 
     //переадресовывает сообщение конкретному человеку в чате
     //в начале отделяем имя от фразы (подразумевается что в начале, перед :: стоит имя юзера которому хотим отправить)
-    //потом, уже зная имя - пробегаемся по списку людей, находим его и передаем ему фразу
+    //потом, уже зная имя - пробегаемся по списку людей, находим его и передаем ему фразу, а так же пишет это у себя
     public void sendTransMessage(String retMessage) {
         int i = 1;
         String userTo = null;
@@ -275,8 +276,10 @@ public class SocketThread extends Thread {
                                 PrintWriter print = socket.getPrint();
                                 writheMessageToDB(getTime() + "[" + myName + "] шлет личное сообщение [" + userTo + "] :" + retval); //запись в БД
                                 print.println("[" + getTime() + " " + myName + "] шлет вам личное сообщение: " + retval);
+                                pw.println("[" + getTime() + " " + myName + "] <Вы> шлете личное сообщение[" + userTo + "] :" + retval);
                                 return;
                             }
+
                         } catch (Exception ex) {
                             ex.printStackTrace(System.out);
                         }
